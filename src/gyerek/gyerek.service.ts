@@ -1,26 +1,48 @@
+// gyerekek.service.ts
 import { Injectable } from '@nestjs/common';
-import { CreateGyerekDto } from './dto/create-gyerek.dto';
-import { UpdateGyerekDto } from './dto/update-gyerek.dto';
+import { PrismaService } from '../prisma.service';
+import { Gyerek } from '@prisma/client';
 
 @Injectable()
-export class GyerekService {
-  create(createGyerekDto: CreateGyerekDto) {
-    return 'This action adds a new gyerek';
+export class GyerekekService {
+  constructor(private prisma: PrismaService) {}
+
+  async create(data: { nev: string; cim: string; joE: boolean }): Promise<Gyerek> {
+    return this.prisma.gyerek.create({
+      data,
+    });
   }
 
-  findAll() {
-    return `This action returns all gyerek`;
+  async findAll(): Promise<Gyerek[]> {
+    return this.prisma.gyerek.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gyerek`;
+  async findOne(id: number): Promise<Gyerek> {
+    return this.prisma.gyerek.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateGyerekDto: UpdateGyerekDto) {
-    return `This action updates a #${id} gyerek`;
+  async update(id: number, data: { nev?: string; cim?: string; joE?: boolean }): Promise<Gyerek> {
+    return this.prisma.gyerek.update({
+      where: { id },
+      data,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gyerek`;
+  async remove(id: number): Promise<Gyerek> {
+    return this.prisma.gyerek.delete({
+      where: { id },
+    });
+  }
+
+  // Játék hozzárendelése gyerekhez
+  async addJatekToGyerek(keroId: number, jatekId: number) {
+    return this.prisma.keres.create({
+      data: {
+        keroId,
+        jatekId,
+      },
+    });
   }
 }

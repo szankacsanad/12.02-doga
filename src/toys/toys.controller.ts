@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ToysService } from './toys.service';
-import { CreateToyDto } from './dto/create-toy.dto';
-import { UpdateToyDto } from './dto/update-toy.dto';
+// jatekok.controller.ts
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { JatekokService } from './toys.service';
+import { Jatek } from '@prisma/client';
 
-@Controller('toys')
-export class ToysController {
-  constructor(private readonly toysService: ToysService) {}
+@Controller('jatekok')
+export class JatekokController {
+  constructor(private readonly jatekokService: JatekokService) {}
 
   @Post()
-  create(@Body() createToyDto: CreateToyDto) {
-    return this.toysService.create(createToyDto);
+  async create(@Body() body: { megnevezes: string; anyag: string; suly: number }): Promise<Jatek> {
+    return this.jatekokService.create(body);
   }
 
   @Get()
-  findAll() {
-    return this.toysService.findAll();
+  async findAll(): Promise<Jatek[]> {
+    return this.jatekokService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.toysService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<Jatek> {
+    return this.jatekokService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateToyDto: UpdateToyDto) {
-    return this.toysService.update(+id, updateToyDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() body: { megnevezes?: string; anyag?: string; suly?: number }): Promise<Jatek> {
+    return this.jatekokService.update(id, body);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.toysService.remove(+id);
+  async remove(@Param('id') id: number): Promise<Jatek> {
+    return this.jatekokService.remove(id);
   }
 }

@@ -1,34 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { GyerekService } from './gyerek.service';
-import { CreateGyerekDto } from './dto/create-gyerek.dto';
-import { UpdateGyerekDto } from './dto/update-gyerek.dto';
+// gyerekek.controller.ts
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { GyerekekService } from './gyerek.service';
+import { Gyerek } from '@prisma/client';
 
-@Controller('gyerek')
-export class GyerekController {
-  constructor(private readonly gyerekService: GyerekService) {}
+@Controller('gyerekek')
+export class GyerekekController {
+  constructor(private readonly gyerekekService: GyerekekService) {}
 
   @Post()
-  create(@Body() createGyerekDto: CreateGyerekDto) {
-    return this.gyerekService.create(createGyerekDto);
+  async create(@Body() body: { nev: string; cim: string; joE: boolean }): Promise<Gyerek> {
+    return this.gyerekekService.create(body);
   }
 
   @Get()
-  findAll() {
-    return this.gyerekService.findAll();
+  async findAll(): Promise<Gyerek[]> {
+    return this.gyerekekService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gyerekService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<Gyerek> {
+    return this.gyerekekService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGyerekDto: UpdateGyerekDto) {
-    return this.gyerekService.update(+id, updateGyerekDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() body: { nev?: string; cim?: string; joE?: boolean }): Promise<Gyerek> {
+    return this.gyerekekService.update(id, body);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gyerekService.remove(+id);
+  async remove(@Param('id') id: number): Promise<Gyerek> {
+    return this.gyerekekService.remove(id);
+  }
+
+  @Post(':gyerekId/jatek/:jatekId')
+  async addJatekToGyerek(@Param('gyerekId') gyerekId: number, @Param('jatekId') jatekId: number) {
+    return this.gyerekekService.addJatekToGyerek(gyerekId, jatekId);
   }
 }
